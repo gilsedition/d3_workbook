@@ -1,12 +1,36 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-
+<style>
+body {
+  background-color: #F1F3F3;
+}
+.axis {
+  font: 15px sans-serif;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #D4D8DA;
+  stroke-width: 1px;
+  shape-rendering: crispEdges;
+}
+.toolTip {
+  position: absolute;
+  display: none;
+  min-width: 80px;
+  height: auto;
+  background: none repeat scroll 0 0 #ffffff;
+  border: 1px solid #6F257F;
+  padding: 14px;
+  text-align: center;
+}
+</style>
 <body>
 <!-- load the d3.js library -->     
 <script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<!-- <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script> -->
 <script>
-  function barChart(data, xVariable, yVariable){
+  function barChart(data, xVariable, yVariable, tooltipVariable){
     // set the dimensions and margins of the graph
     var margin = chartConfig.margin,
     width = chartConfig.width - margin.left - margin.right,
@@ -18,6 +42,14 @@
               .padding(0.1);
     var y = d3.scaleLinear()
               .range([height, 0]);
+
+    // var tip = d3.tip()
+    //             .attr('class', 'd3-tip')
+    //             .offset([-10, 0])
+    //             .html(function(d) {
+    //               console.log(d);
+    //               return "<strong>Frequency:</strong> <span style='color:red'>" + d[tooltipVariable] + "</span>";
+    //             })
           
     // append the svg object to the body of the page
     // append a 'group' element to 'svg'
@@ -28,6 +60,10 @@
       .append("g")
         .attr("transform", 
               "translate(" + margin.left + "," + margin.top + ")");
+
+    var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+    // svg.call(tip);
 
     // Scale the range of the data in the domains
     x.domain(data.map(function(d) { return d[xVariable]; }));
@@ -42,7 +78,15 @@
         .attr("width", x.bandwidth())
         .attr("y", function(d) { return y(d[yVariable]); })
         .attr("height", function(d) { return height - y(d[yVariable]); })
-        .attr("fill", chartConfig.color);
+        .attr("fill", chartConfig.color)
+        .on("mousemove", function(d){
+            tooltip
+              .style("left", d3.event.pageX - 50 + "px")
+              .style("top", d3.event.pageY - 70 + "px")
+              .style("display", "inline-block")
+              .html(tooltipVariable + ": " + (d[tooltipVariable]));
+        })
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
 
     // add the x Axis
     svg.append("g")
@@ -72,7 +116,7 @@
     data.forEach(function(d) {
       d['sales'] = +d['sales'];
     });
-    barChart(data, "salesperson", "sales");
+    barChart(data, "salesperson", "sales", "sales");
   });
 
 </script>
