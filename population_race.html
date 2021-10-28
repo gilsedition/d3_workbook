@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Test</title>
+	<style type="text/css">
+		.year_ticker{
+			font-size: 70px !important;
+		}
+	</style>
+</head>
+<body>
+	<div id="observablehq-44cac892"></div>
+	<script type="module">
+	import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
+	import define from "https://api.observablehq.com/@gilsedition/bar-chart-race.js?v=3";
+	const inspect = Inspector.into("#observablehq-44cac892");
+	(new Runtime).module(define, name => (name === "chart") && inspect());
+	</script>
+</body>
+</html>
